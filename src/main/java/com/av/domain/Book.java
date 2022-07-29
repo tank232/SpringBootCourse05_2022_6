@@ -1,5 +1,6 @@
 package com.av.domain;
 
+import lombok.Data;
 import org.hibernate.annotations.LazyToOne;
 import org.hibernate.annotations.LazyToOneOption;
 
@@ -29,23 +30,22 @@ import java.util.Set;
 @Entity
 @Table(name = "book", uniqueConstraints =
         {@UniqueConstraint(columnNames = {"title", "edition"}, name = "book_title_edition_u1")})
-@NamedQueries({@NamedQuery(name = Book.FIND_ALL, query = "select  distinct  b from Book b "
-        + " left join fetch b.authors a "
-        + " left join fetch b.genre g")})
-
+@NamedQueries({
+        @NamedQuery(name = Book.FIND_ALL, query = "select    b from Book b"),
+        @NamedQuery(name = Book.FIND_BY_NAME, query = "select    b from Book b  where b.title = :title")
+})
+@Data
 public class Book {
-
     public static final String FIND_ALL = "Book.findAll";
+    public static final String FIND_BY_NAME= "Book.byName";
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name = "id", updatable = false, nullable = false)
     private Long id;
-    @OneToOne(targetEntity = Genre.class, fetch = FetchType.EAGER)
-    private Genre genre;
 
     @ManyToMany(targetEntity = Author.class, fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JoinTable(name = "book_author_t", joinColumns = @JoinColumn(foreignKey = @ForeignKey(name = "book_author_key"),
             name = "book_id"), inverseJoinColumns = @JoinColumn(name = "author_id"))
-    // @JoinColumn(foreignKey=@ForeignKey(name="book_author_key"))
     private Set<Author> authors;
     @Column(name = "title", length = 255, nullable = false)
     private String title;
@@ -61,81 +61,10 @@ public class Book {
     @JoinColumn(name = "book_id")
     private List<Comment> comments = new ArrayList<Comment>() ;
 
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
-
-
-
-    public Book() {
-        authors = new HashSet<Author>();
-    }
-
-    public Genre getGenre() {
-        return genre;
-    }
-
-    public void setGenre(Genre genre) {
-        this.genre = genre;
-    }
-
-    public Set<Author> getAuthors() {
-        return authors;
-    }
-
-    public void setAuthors(Set<Author> authors) {
-        this.authors = authors;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public int getPublishYear() {
-        return publishYear;
-    }
-
-    public void setPublishYear(int publishYear) {
-        this.publishYear = publishYear;
-    }
-
-    public String getIsbn() {
-        return isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public short getEdition() {
-        return edition;
-    }
-
-    public void setEdition(short edition) {
-        this.edition = edition;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     @Override
     public String toString() {
         return "Book{" +
                 "id=" + id +
-                ", genre=" + genre +
                 ", authors=" + authors +
                 ", title='" + title + '\'' +
                 ", publishYear=" + publishYear +

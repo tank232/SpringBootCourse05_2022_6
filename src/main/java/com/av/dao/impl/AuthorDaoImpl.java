@@ -16,7 +16,7 @@ public class AuthorDaoImpl implements AuthorDao {
 
     @PersistenceContext
     private final EntityManager entityManager;
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
 
     public AuthorDaoImpl(EntityManager entityManager) {
         this.entityManager = entityManager;

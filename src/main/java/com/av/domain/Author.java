@@ -1,5 +1,7 @@
 package com.av.domain;
 
+import lombok.Data;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -15,20 +17,27 @@ import javax.persistence.ManyToMany;
 import java.util.List;
 
 
-@Table(name = "authors")
+
 @Entity
+@Table(name = "authors")
 @NamedQueries(
         {@NamedQuery(name = Author.FIND_ALL, query = "select a from Author a"),
                 @NamedQuery(name = Author.FIND_BY_NAME, query = "select a from Author a where a.name = :name")
 
         }
 )
+@Data
 public class Author {
 
     public static final String FIND_ALL = "Author.findAll";
     public static final String FIND_BY_NAME = "Author.byName";
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
+    @Column(name = "name", length = 50, nullable = false)
     private String name;
+    @ManyToMany(targetEntity = Book.class)
+    @JoinColumn(foreignKey = @ForeignKey(name = "book_fk"))
     private List<Book> books;
 
     public Author() {
@@ -41,38 +50,10 @@ public class Author {
         this.name = name;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    @Column(name = "name", length = 50, nullable = false)
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     @Override
     public String toString() {
         return String.format("Author{id=%d, name='%s'}", id, name);
     }
 
 
-    @ManyToMany(targetEntity = Book.class)
-    @JoinColumn(foreignKey = @ForeignKey(name = "book_fk"))
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
-    }
 }
