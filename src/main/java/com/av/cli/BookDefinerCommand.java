@@ -15,6 +15,7 @@ import org.springframework.shell.standard.ShellMethod;
 import javax.transaction.Transactional;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ShellComponent
 @Slf4j
@@ -54,6 +55,18 @@ public class BookDefinerCommand {
             book.getComments().add(comment);
         } else {
             log.error("You mast init book first");
+        }
+    }
+
+
+    @ShellMethod("show comment")
+    @Transactional
+    public void showComment(String bookTitle) {
+        Book book = bookDao.findByName(bookTitle);
+        if (book != null && book.getComments()!=null && book.getComments().size()>0) {
+            log.info(MessageFormat.format("Book.comment:{0}",book.getComments().stream().map(b->b.getText()).collect(Collectors.joining(","))));
+        } else {
+            log.error("You mast init book & comment");
         }
     }
 

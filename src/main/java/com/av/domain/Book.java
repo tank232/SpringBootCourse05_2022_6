@@ -15,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.NamedAttributeNode;
+import javax.persistence.NamedEntityGraph;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -34,6 +36,8 @@ import java.util.Set;
         @NamedQuery(name = Book.FIND_ALL, query = "select    b from Book b"),
         @NamedQuery(name = Book.FIND_BY_NAME, query = "select    b from Book b  where b.title = :title")
 })
+@NamedEntityGraph(name = "avatars-entity-graph",
+        attributeNodes = {@NamedAttributeNode("title")})
 @Data
 public class Book {
     public static final String FIND_ALL = "Book.findAll";

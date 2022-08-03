@@ -4,7 +4,9 @@ import com.av.dao.BookDao;
 import com.av.domain.Book;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityGraph;
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +41,10 @@ public class BookDaoImpl implements BookDao {
 
     @Override
     public List<Book> getAll() {
-        return entityManager.createNamedQuery(Book.FIND_ALL, Book.class).getResultList();
+        EntityGraph<Book> entityGraph = (EntityGraph<Book>) entityManager.getEntityGraph("avatars-entity-graph");
+        TypedQuery<Book> namedQuery = entityManager.createNamedQuery(Book.FIND_ALL, Book.class);
+        namedQuery.setHint("javax.persistence.fetchgraph", entityGraph);
+        return namedQuery.getResultList();
     }
 
 
